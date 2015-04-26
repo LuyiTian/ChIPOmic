@@ -28,6 +28,7 @@ def get_data_dir():
     LOCATION/ ->
         ./jul2013.roadmapData.qc - Consolidated_EpigenomeIDs_QC.csv  -> metadata
         hm_data/ -> store histone modification data
+        tmp/ -> store temporary data during analysis
     '''
     try:
         pc_name = os.environ["COMPUTERNAME"]
@@ -37,6 +38,9 @@ def get_data_dir():
     if not os.path.isdir(os.path.join(root_dir, "hm_data")):
         #if dictionary hm_data/ not exist, create it.
         os.mkdir(os.path.join(root_dir, "hm_data"))
+    if not os.path.isdir(os.path.join(root_dir, "tmp")):
+        #if dictionary tmp/ not exist, create it.
+        os.mkdir(os.path.join(root_dir, "tmp"))
     return root_dir
 
 
@@ -63,8 +67,8 @@ if __name__ == '__main__':
     print path
     DF = pd.read_csv(path, sep='\t', compression='gzip', header=None, names=narrow_peak_col)
     import pylab as pl
-    a = list(DF['chromEnd']-DF['chromStart'])
-    a = sorted(a)[:50000]
-    pl.hist(a, bins=50)
+    a = DF['chromEnd']-DF['chromStart']
+    b = DF['signalValue']
+    pl.plot(a,b, 'x')
     pl.show()
     #dl_narrow_peak()
