@@ -64,15 +64,15 @@ def find_cluster(mark, chrom, max_diff=100):
     index_num = 0
     for the_i, row in DF.iterrows():
         if not current_mid:
-            DF[the_i, 'Cluster'] = index_num
+            DF.ix[the_i, 'Cluster'] = index_num
             current_mid = [(row['chromEnd']+row['chromStart'])*0.5]
         else:
             if (row['chromEnd']+row['chromStart'])*0.5-sum(current_mid)/len(current_mid) < 150:
-                DF[the_i, 'Cluster'] = index_num
+                DF.ix[the_i, 'Cluster'] = index_num
                 current_mid.append((row['chromEnd']+row['chromStart'])*0.5)
             else:
                 index_num += 1
-                DF[the_i, 'Cluster'] = index_num
+                DF.ix[the_i, 'Cluster'] = index_num
                 current_mid = [(row['chromEnd']+row['chromStart'])*0.5]
     DF.to_csv(os.path.join(get_data_dir(), "tmp", "{0}-{1}_clustered.csv".format(chrom, mark)), sep='\t', index=False)
 
