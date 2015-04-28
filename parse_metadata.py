@@ -9,7 +9,7 @@ import urllib
 
 ##########  hard coded parameters
 LOCATION = {
-    "luyi": os.path.normpath("/Users/luyi/data/epi_data")
+    "luyi": os.path.normpath("/Users/luyi/data/epi_data"),
     "i7": os.path.normpath("/home/i7/workspace/PyTest/epi_data")
 }
 
@@ -51,7 +51,7 @@ def dl_narrow_peak(mark=MARK):
     '''
     DF = pd.read_csv(os.path.join(get_data_dir(), metadata_filename))
     EID_list = sorted(list(set(list(DF.EID))))
-    EID_list = EID_list[80:]  # the file list is too large, just download part of it one time
+    EID_list = ['E083']#EID_list[80:]  # the file list is too large, just download part of it one time
     for EID in EID_list:
         for m in mark:
             print 'downloading...    ', EID, m
@@ -74,4 +74,4 @@ if __name__ == '__main__':
     pl.plot(a,b, 'x')
     pl.show()
     '''
-    dl_narrow_peak()
+    #dl_narrow_peak()
