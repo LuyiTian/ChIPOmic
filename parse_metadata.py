@@ -50,7 +50,7 @@ def dl_narrow_peak(mark=MARK):
     '''
     DF = pd.read_csv(os.path.join(get_data_dir(), metadata_filename))
     EID_list = sorted(list(set(list(DF.EID))))
-    EID_list = EID_list[:10]  # the file list is too large, just download part of it one time
+    EID_list = EID_list[80:]  # the file list is too large, just download part of it one time
     for EID in EID_list:
         for m in mark:
             print 'downloading...    ', EID, m
@@ -60,6 +60,7 @@ def dl_narrow_peak(mark=MARK):
     print 'download finished~~~~~~~~~~~~~~~'
 
 if __name__ == '__main__':
+    '''
     print get_data_dir()
     print os.path.join(get_data_dir(), metadata_filename)
     EID, m = 'E002', 'H3K4me1'
@@ -71,4 +72,5 @@ if __name__ == '__main__':
     b = DF['signalValue']
     pl.plot(a,b, 'x')
     pl.show()
-    #dl_narrow_peak()
+    '''
+    dl_narrow_peak()
