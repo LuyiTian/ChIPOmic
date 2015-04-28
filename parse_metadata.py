@@ -10,6 +10,7 @@ import urllib
 ##########  hard coded parameters
 LOCATION = {
     "luyi": os.path.normpath("/Users/luyi/data/epi_data")
+    "i7": os.path.normpath("/home/i7/workspace/PyTest/epi_data")
 }
 
 MARK = ['H3K4me1', 'H3K4me3', 'H3K27me3', 'H3K36me3', 'H3K9me3']
