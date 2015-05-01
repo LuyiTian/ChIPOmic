@@ -55,7 +55,7 @@ def organize_by_chrom(EID_list, mark, chrom):
     res_df.to_csv(os.path.join(get_data_dir(), "tmp", "{0}-{1}.csv".format(chrom, mark)), sep='\t', index=False)
 
 
-def find_cluster(mark, chrom, max_diff=100):
+def find_cluster(mark, chrom, max_diff=150):
     path = os.path.join(get_data_dir(), "tmp", "{0}-{1}.csv".format(chrom, mark))
     DF = pd.read_csv(path, sep='\t')
     DF.convert_objects(convert_numeric=True)
@@ -67,7 +67,7 @@ def find_cluster(mark, chrom, max_diff=100):
             DF.ix[the_i, 'Cluster'] = index_num
             current_mid = [(row['chromEnd']+row['chromStart'])*0.5]
         else:
-            if (row['chromEnd']+row['chromStart'])*0.5-sum(current_mid)/len(current_mid) < 150:
+            if (row['chromEnd']+row['chromStart'])*0.5-sum(current_mid)/len(current_mid) < max_diff:
                 DF.ix[the_i, 'Cluster'] = index_num
                 current_mid.append((row['chromEnd']+row['chromStart'])*0.5)
             else:
@@ -78,22 +78,21 @@ def find_cluster(mark, chrom, max_diff=100):
 
 
 if __name__ == '__main__':
-    import numpy as np
     EID_list = ['E002', 'E003', 'E004', 'E005', 'E006', 'E007']
     Full_EID_list = ['E'+str(n).zfill(3) for n in range(1, 130)]
     Full_EID_list.remove('E060')
     Full_EID_list.remove('E064')
     mark = 'H3K4me3'
-    '''
-    path = os.path.join(get_data_dir(), "tmp", "{0}-{1}.csv".format('chr1', mark))
+    path = os.path.join(get_data_dir(), "tmp", "{0}-{1}_clustered.csv".format('chr1', mark))
     DF = pd.read_csv(path, sep='\t')
     DF.convert_objects(convert_numeric=True)
-    print DF
-    tmp = np.array(DF.loc[1:, 'chromStart']) - np.array(DF.loc[:len(DF)-2, 'chromStart'])
+    TT = DF.loc[:, 'Cluster'].value_counts()
+    print TT[TT>50]
+    #tmp = np.array(DF.loc[1:, 'chromStart']) - np.array(DF.loc[:len(DF)-2, 'chromStart'])
     import pylab as pl
-    pl.hist([i for i in tmp if i < 2000], bins=200)
+    print len([i for i in DF.loc[:, 'Cluster'].value_counts() if i > 30])
+    pl.hist([i for i in DF.loc[:, 'Cluster'].value_counts() if i > 30], bins=50)
     pl.show()
-    '''
-    find_cluster(mark, 'chr1')
+    #find_cluster(mark, 'chr1')
     #organize_by_chrom(Full_EID_list, mark, 'chr1')
     #com_mark(EID_list, mark)

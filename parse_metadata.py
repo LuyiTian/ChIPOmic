@@ -30,6 +30,7 @@ def get_data_dir():
         ./jul2013.roadmapData.qc - Consolidated_EpigenomeIDs_QC.csv  -> metadata
         hm_data/ -> store histone modification data
         tmp/ -> store temporary data during analysis
+        eQTL_data -> store eQTL data got from http://www.gtexportal.org/home/
     '''
     try:
         pc_name = os.environ["COMPUTERNAME"]
@@ -42,6 +43,9 @@ def get_data_dir():
     if not os.path.isdir(os.path.join(root_dir, "tmp")):
         #if dictionary tmp/ not exist, create it.
         os.mkdir(os.path.join(root_dir, "tmp"))
+    if not os.path.isdir(os.path.join(root_dir, "eQTL_data")):
+        #if dictionary eQTL_data/ not exist, create it.
+        os.mkdir(os.path.join(root_dir, "eQTL_data"))
     return root_dir
 
 
