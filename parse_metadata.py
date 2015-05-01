@@ -24,6 +24,18 @@ narrow_peak_col = ["chrom", "chromStart", "chromEnd", "name", "score", "strand",
 ##########
 
 
+def get_full_EID_list(numerical=False):
+    if numerical:
+        Full_EID_list = range(1, 130)
+        Full_EID_list.remove(60)
+        Full_EID_list.remove(64)
+    else:
+        Full_EID_list = ['E'+str(n).zfill(3) for n in range(1, 130)]
+        Full_EID_list.remove('E060')
+        Full_EID_list.remove('E064')
+    return Full_EID_list
+
+
 def get_data_dir():
     '''
     LOCATION/ ->

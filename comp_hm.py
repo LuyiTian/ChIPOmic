@@ -87,7 +87,7 @@ if __name__ == '__main__':
     DF = pd.read_csv(path, sep='\t')
     DF.convert_objects(convert_numeric=True)
     TT = DF.loc[:, 'Cluster'].value_counts()
-    print TT[TT>50]
+    print TT[TT > 50]
     #tmp = np.array(DF.loc[1:, 'chromStart']) - np.array(DF.loc[:len(DF)-2, 'chromStart'])
     import pylab as pl
     print len([i for i in DF.loc[:, 'Cluster'].value_counts() if i > 30])
