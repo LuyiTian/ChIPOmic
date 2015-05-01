@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 ###
 
 
-def reg_by_chrom(mark, chrom, cut_off=60):
+def reg_by_chrom(mark, chrom, cut_off=40):
     Full_EID_list = get_full_EID_list()
     Full_EID_dict = dict([(EID, i) for i, EID in enumerate(Full_EID_list)])
     path = os.path.join(get_data_dir(), "tmp", "{0}-{1}_clustered.csv".format(chrom, mark))
@@ -37,8 +37,16 @@ def reg_by_chrom(mark, chrom, cut_off=60):
     f.tight_layout()
     plt.show()
     '''
+    print np.shape(np.array(res_matrix))
     corr_mat = np.corrcoef(np.array(res_matrix))
-    plt.hist(corr_mat.flatten(), bins=50)
+    tmp = np.array(res_matrix)
+    x, y = np.shape(tmp)
+    tmp = tmp.flatten()
+    np.random.shuffle(tmp)
+    tmp = np.reshape(tmp,(x,y))
+    ran_mat = np.corrcoef(tmp)
+    plt.hist([corr_mat.flatten(), ran_mat.flatten()], bins=50, label=['{0} on {1}'.format(mark, chrom), 'random shuffle'])
+    plt.legend()
     plt.show()
 
 
