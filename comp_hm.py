@@ -67,7 +67,7 @@ def find_cluster(mark, chrom, max_diff=150):
             DF.ix[the_i, 'Cluster'] = index_num
             current_mid = [(row['chromEnd']+row['chromStart'])*0.5]
         else:
-            if (row['chromEnd']+row['chromStart'])*0.5-sum(current_mid)/len(current_mid) < max_diff:
+            if -max_diff < (row['chromEnd']+row['chromStart'])*0.5-sum(current_mid)/len(current_mid) < max_diff:
                 DF.ix[the_i, 'Cluster'] = index_num
                 current_mid.append((row['chromEnd']+row['chromStart'])*0.5)
             else:
