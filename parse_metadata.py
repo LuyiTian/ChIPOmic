@@ -21,6 +21,8 @@ narrow_peak_url = "http://egg2.wustl.edu/roadmap/data/byFileType/peaks/consolida
 
 narrow_peak_col = ["chrom", "chromStart", "chromEnd", "name", "score", "strand", "signalValue", "pValue", "qValue", "peak"]
 #the name following the defination of narrow peak file: http://genome.ucsc.edu/FAQ/FAQformat.html#format12
+
+gene_annotation_filename = "Ensembl_v65.Gencode_v10.ENSG.gene_info"
 ##########
 
 
@@ -42,22 +44,19 @@ def get_data_dir():
         ./jul2013.roadmapData.qc - Consolidated_EpigenomeIDs_QC.csv  -> metadata
         hm_data/ -> store histone modification data
         tmp/ -> store temporary data during analysis
-        eQTL_data -> store eQTL data got from http://www.gtexportal.org/home/
+        eQTL_data/ -> store eQTL data got from http://www.gtexportal.org/home/
+        gene_exp/ -> store gene expression data for epigenomic roadmap project
     '''
     try:
         pc_name = os.environ["COMPUTERNAME"]
     except KeyError:
         pc_name = os.environ['USER']
     root_dir = LOCATION[pc_name]
-    if not os.path.isdir(os.path.join(root_dir, "hm_data")):
-        #if dictionary hm_data/ not exist, create it.
-        os.mkdir(os.path.join(root_dir, "hm_data"))
-    if not os.path.isdir(os.path.join(root_dir, "tmp")):
-        #if dictionary tmp/ not exist, create it.
-        os.mkdir(os.path.join(root_dir, "tmp"))
-    if not os.path.isdir(os.path.join(root_dir, "eQTL_data")):
-        #if dictionary eQTL_data/ not exist, create it.
-        os.mkdir(os.path.join(root_dir, "eQTL_data"))
+    sub_dir_list = ["hm_data", "tmp", "eQTL_data", "gene_exp"]
+    for sub_dir in sub_dir_list:
+        if not os.path.isdir(os.path.join(root_dir, sub_dir)):
+            # if sub-dictionary not exist, create it.
+            os.mkdir(os.path.join(root_dir, sub_dir))
     return root_dir
 
 
@@ -67,7 +66,7 @@ def dl_narrow_peak(mark=MARK):
     '''
     DF = pd.read_csv(os.path.join(get_data_dir(), metadata_filename))
     EID_list = sorted(list(set(list(DF.EID))))
-    EID_list = ['E083']#EID_list[80:]  # the file list is too large, just download part of it one time
+    EID_list = ['E083']  # EID_list[80:]  # the file list is too large, just download part of it one time
     for EID in EID_list:
         for m in mark:
             print 'downloading...    ', EID, m
@@ -77,7 +76,6 @@ def dl_narrow_peak(mark=MARK):
     print 'download finished~~~~~~~~~~~~~~~'
 
 if __name__ == '__main__':
-    '''
     print get_data_dir()
     print os.path.join(get_data_dir(), metadata_filename)
     EID, m = 'E002', 'H3K4me1'
@@ -85,9 +83,8 @@ if __name__ == '__main__':
     print path
     DF = pd.read_csv(path, sep='\t', compression='gzip', header=None, names=narrow_peak_col)
     import pylab as pl
-    a = DF['chromEnd']-DF['chromStart']
+    #a = DF['chromEnd']-DF['chromStart']
     b = DF['signalValue']
-    pl.plot(a,b, 'x')
+    pl.hist(b, bins=100)
     pl.show()
-    '''
     #dl_narrow_peak()

@@ -56,6 +56,10 @@ def organize_by_chrom(EID_list, mark, chrom):
 
 
 def find_cluster(mark, chrom, max_diff=150):
+    '''
+    @param:
+    @return:
+    '''
     path = os.path.join(get_data_dir(), "tmp", "{0}-{1}.csv".format(chrom, mark))
     DF = pd.read_csv(path, sep='\t')
     DF.convert_objects(convert_numeric=True)
