@@ -81,7 +81,22 @@ def find_cluster(mark, chrom, max_diff=150):
     DF.to_csv(os.path.join(get_data_dir(), "tmp", "{0}-{1}_clustered.csv".format(chrom, mark)), sep='\t', index=False)
 
 
+def Bland_Altman_plot(mark, chrom):
+    '''
+    @param:
+    @return:
+    perform Bland-Altman_plot on data:
+    http://en.wikipedia.org/wiki/Bland%E2%80%93Altman_plot
+    '''
+    path = os.path.join(get_data_dir(), "tmp", "{0}-{1}_clustered.csv".format(chrom, mark))
+    DF = pd.read_csv(path, sep='\t')
+    S_x = 0.5*(DF.loc[:, 'chromEnd'].values+DF.loc[:, 'chromStart'].values)
+    S_y = DF.loc[:, 'chromEnd'].values-DF.loc[:, 'chromStart'].values
+    import pylab as pl
+    pl.plot(S_x[2000:3000], S_y[2000:3000], 'o')
+    pl.show()
 if __name__ == '__main__':
+    '''
     EID_list = ['E002', 'E003', 'E004', 'E005', 'E006', 'E007']
     Full_EID_list = ['E'+str(n).zfill(3) for n in range(1, 130)]
     Full_EID_list.remove('E060')
@@ -97,6 +112,8 @@ if __name__ == '__main__':
     print len([i for i in DF.loc[:, 'Cluster'].value_counts() if i > 30])
     pl.hist([i for i in DF.loc[:, 'Cluster'].value_counts() if i > 30], bins=50)
     pl.show()
+    '''
+    Bland_Altman_plot('H3K4me3', 'chr1')
     #find_cluster(mark, 'chr1')
     #organize_by_chrom(Full_EID_list, mark, 'chr1')
     #com_mark(EID_list, mark)
