@@ -39,13 +39,21 @@ def reg_by_chrom(mark, chrom, cut_off=40):
     '''
     print np.shape(np.array(res_matrix))
     corr_mat = np.corrcoef(np.array(res_matrix))
-    tmp = np.array(res_matrix)
-    x, y = np.shape(tmp)
-    tmp = tmp.flatten()
-    np.random.shuffle(tmp)
-    tmp = np.reshape(tmp, (x, y))
+
+    tmp1 = np.array(res_matrix)
+    x, y = np.shape(tmp1)
+    tmp1 = tmp1.flatten()
+    np.random.shuffle(tmp1)
+    tmp1 = np.reshape(tmp1, (x, y))
+    ran_mat1 = np.corrcoef(tmp1)
+    tmp = zip(*res_matrix)
+    tmp = [np.random.permutation(col) for col in tmp]
+    tmp = np.array(tmp).T
     ran_mat = np.corrcoef(tmp)
-    plt.hist([corr_mat.flatten(), ran_mat.flatten()], bins=50, label=['{0} on {1}'.format(mark, chrom), 'random shuffle'])
+    sns.distplot(corr_mat.flatten(), hist=False, kde_kws={"shade": True},label='true data')
+    sns.distplot(ran_mat.flatten(), hist=False, kde_kws={"shade": True},label='permutation')
+    sns.distplot(ran_mat1.flatten(), hist=False, kde_kws={"shade": True},label='random shuffle')
+    #plt.hist([corr_mat.flatten(), ran_mat.flatten()], bins=50, label=['{0} on {1}'.format(mark, chrom), 'random permutation'])
     plt.legend()
     plt.show()
 
@@ -58,7 +66,7 @@ def get_gene_annotation(seq_type="pc"):
     type_dict = {"pc":"protein_coding"}
     path = os.path.join(get_data_dir(), "gene_exp", gene_annotation_filename)
     DF = pd.read_csv(path, sep='\t', header=None, names=narrow_peak_col)
-    return DF.loc[DF[]
+    #return DF.loc[DF[]
 
 
 def com_exp_mk(mark, chrom):
