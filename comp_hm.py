@@ -6,7 +6,9 @@ import os
 from parse_metadata import get_data_dir, narrow_peak_col
 import pandas as pd
 from itertools import izip
-
+import numpy as np
+# import sklearn for mean shift clustering
+from sklearn.cluster import MeanShift, estimate_bandwidth
 
 def com_mark(EID_list, mark):
     '''
@@ -81,20 +83,54 @@ def find_cluster(mark, chrom, max_diff=150):
     DF.to_csv(os.path.join(get_data_dir(), "tmp", "{0}-{1}_clustered.csv".format(chrom, mark)), sep='\t', index=False)
 
 
-def Bland_Altman_plot(mark, chrom):
+def Bland_Altman_plot(mark, chrom, EID=None):
     '''
     @param:
     @return:
     perform Bland-Altman_plot on data:
     http://en.wikipedia.org/wiki/Bland%E2%80%93Altman_plot
     '''
+    if EID:
+        path = os.path.join(get_data_dir(), "hm_data", "{0}-{1}.gz".format(EID, mark))
+        DF = pd.read_csv(path, sep='\t', compression='gzip', header=None, names=narrow_peak_col)
+        DF = DF.loc[DF["chrom"] == chrom].sort('chromStart')
+        DF = DF.loc[(DF["chromStart"] > 1080000) & (DF["chromStart"] < 1260000)]
+    else:
+        path = os.path.join(get_data_dir(), "tmp", "{0}-{1}_clustered.csv".format(chrom, mark))
+        DF = pd.read_csv(path, sep='\t')
+    S_x = 0.5*(DF.loc[:, 'chromEnd'].values+DF.loc[:, 'chromStart'].values)
+    S_y = DF.loc[:, 'chromEnd'].values-DF.loc[:, 'chromStart'].values
+    import pylab as pl
+    pl.plot(S_x, S_y, '.')
+    pl.show()
+
+
+def BA_meanshift_cluster(mark, chrom):
+    '''
+    @param:
+    @return:
+    perform mean shift cluster on 2D data:
+        ((chromStart+chromEnd)*0.5, chromEnd-chromStart)
+    '''
     path = os.path.join(get_data_dir(), "tmp", "{0}-{1}_clustered.csv".format(chrom, mark))
     DF = pd.read_csv(path, sep='\t')
     S_x = 0.5*(DF.loc[:, 'chromEnd'].values+DF.loc[:, 'chromStart'].values)
     S_y = DF.loc[:, 'chromEnd'].values-DF.loc[:, 'chromStart'].values
-    import pylab as pl
-    pl.plot(S_x[2000:3000], S_y[2000:3000], 'o')
-    pl.show()
+    X = np.hstack((np.atleast_2d(S_x[8000:9000]).T, np.atleast_2d(S_y[8000:9000]).T))
+    print X
+    bandwidth = estimate_bandwidth(X, quantile=0.05, n_samples=1000)
+    ms = MeanShift(bandwidth=bandwidth, bin_seeding=True)
+    ms.fit(X)
+    labels = ms.labels_
+    print list(set(labels))
+    import matplotlib.pyplot as plt
+    from itertools import cycle
+    colors = cycle('bgrcmykbgrcmykbgrcmykbgrcmyk')
+    for k, col in zip(range(len(list(set(labels)))), colors):
+        my_members = labels == k
+        plt.plot(X[my_members, 0], X[my_members, 1], col + '.')
+    plt.title('Estimated number of clusters: %d' % len(list(set(labels))) )
+    plt.show()
 if __name__ == '__main__':
     '''
     EID_list = ['E002', 'E003', 'E004', 'E005', 'E006', 'E007']
@@ -113,7 +149,8 @@ if __name__ == '__main__':
     pl.hist([i for i in DF.loc[:, 'Cluster'].value_counts() if i > 30], bins=50)
     pl.show()
     '''
-    Bland_Altman_plot('H3K4me3', 'chr1')
+    #Bland_Altman_plot('H3K4me3', 'chr1', 'E002')
+    BA_meanshift_cluster('H3K4me3', 'chr1')
     #find_cluster(mark, 'chr1')
     #organize_by_chrom(Full_EID_list, mark, 'chr1')
     #com_mark(EID_list, mark)
