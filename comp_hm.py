@@ -96,7 +96,7 @@ def Bland_Altman_plot(mark, chrom, EID=None):
         DF = DF.loc[DF["chrom"] == chrom].sort('chromStart')
         DF = DF.loc[(DF["chromStart"] > 1080000) & (DF["chromStart"] < 1260000)]
     else:
-        path = os.path.join(get_data_dir(), "tmp", "{0}-{1}_clustered.csv".format(chrom, mark))
+        path = os.path.join(get_data_dir(), "tmp", "{0}-{1}.csv".format(chrom, mark))
         DF = pd.read_csv(path, sep='\t')
     S_x = 0.5*(DF.loc[:, 'chromEnd'].values+DF.loc[:, 'chromStart'].values)
     S_y = DF.loc[:, 'chromEnd'].values-DF.loc[:, 'chromStart'].values
@@ -112,11 +112,11 @@ def BA_meanshift_cluster(mark, chrom):
     perform mean shift cluster on 2D data:
         ((chromStart+chromEnd)*0.5, chromEnd-chromStart)
     '''
-    path = os.path.join(get_data_dir(), "tmp", "{0}-{1}_clustered.csv".format(chrom, mark))
+    path = os.path.join(get_data_dir(), "tmp", "{0}-{1}.csv".format(chrom, mark))
     DF = pd.read_csv(path, sep='\t')
     S_x = 0.5*(DF.loc[:, 'chromEnd'].values+DF.loc[:, 'chromStart'].values)
     S_y = DF.loc[:, 'chromEnd'].values-DF.loc[:, 'chromStart'].values
-    X = np.hstack((np.atleast_2d(S_x[8000:9000]).T, np.atleast_2d(S_y[8000:9000]).T))
+    X = np.hstack((np.atleast_2d(S_x[9000:11000]).T, np.atleast_2d(S_y[9000:11000]).T))
     print X
     bandwidth = estimate_bandwidth(X, quantile=0.05, n_samples=1000)
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=True)
@@ -129,7 +129,7 @@ def BA_meanshift_cluster(mark, chrom):
     for k, col in zip(range(len(list(set(labels)))), colors):
         my_members = labels == k
         plt.plot(X[my_members, 0], X[my_members, 1], col + '.')
-    plt.title('Estimated number of clusters: %d' % len(list(set(labels))) )
+    plt.title('Estimated number of clusters: %d' % len(list(set(labels))))
     plt.show()
 if __name__ == '__main__':
     '''
