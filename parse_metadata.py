@@ -10,6 +10,7 @@ import urllib
 ##########  hard coded parameters
 LOCATION = {
     "luyi": os.path.normpath("/Users/luyi/data/epi_data"),
+    "HZL-PC": os.path.normpath("E:/Programming/BINFproj/data/epi_data"),
     "i7": os.path.normpath("/home/i7/workspace/PyTest/epi_data")
 }
 
@@ -70,18 +71,18 @@ def dl_narrow_peak(mark=MARK):
     EID_list = ['E083']  # EID_list[80:]  # the file list is too large, just download part of it one time
     for EID in EID_list:
         for m in mark:
-            print 'downloading...    ', EID, m
+            print ('downloading...    ', EID, m)
             urllib.urlretrieve(
                 narrow_peak_url+"{0}-{1}.narrowPeak.gz".format(EID, m),
                 os.path.join(get_data_dir(), "hm_data", "{0}-{1}.gz".format(EID, m)))
-    print 'download finished~~~~~~~~~~~~~~~'
+    print ('download finished~~~~~~~~~~~~~~~')
 
 if __name__ == '__main__':
-    print get_data_dir()
-    print os.path.join(get_data_dir(), metadata_filename)
+    print (get_data_dir())
+    print (os.path.join(get_data_dir(), metadata_filename))
     EID, m = 'E002', 'H3K4me1'
     path = os.path.join(get_data_dir(), "hm_data", "{0}-{1}.gz".format(EID, m))
-    print path
+    print (path)
     DF = pd.read_csv(path, sep='\t', compression='gzip', header=None, names=narrow_peak_col)
     import pylab as pl
     #a = DF['chromEnd']-DF['chromStart']
