@@ -23,6 +23,7 @@ narrow_peak_col = ["chrom", "chromStart", "chromEnd", "name", "score", "strand",
 #the name following the defination of narrow peak file: http://genome.ucsc.edu/FAQ/FAQformat.html#format12
 
 gene_annotation_filename = "Ensembl_v65.Gencode_v10.ENSG.gene_info"
+gene_annotation_col = ["ENSG_ID", "chrom", "chromStart", "chromEnd", "strand", "type", "gene symbol", "full name"]
 ##########
 
 

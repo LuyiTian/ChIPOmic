@@ -1,6 +1,6 @@
 #compute the coralation matrix between marks in different position
 import pandas as pd
-from parse_metadata import get_data_dir, get_full_EID_list, gene_annotation_filename
+from parse_metadata import get_data_dir, get_full_EID_list, gene_annotation_filename, gene_annotation_col
 import os
 import numpy as np
 
@@ -58,15 +58,19 @@ def reg_by_chrom(mark, chrom, cut_off=40):
     plt.show()
 
 
-def get_gene_annotation(seq_type="pc"):
+def get_TSS(seq_type="protein_coding"):
     '''
     @param:
     @return:
     '''
-    type_dict = {"pc": "protein_coding"}
     path = os.path.join(get_data_dir(), "gene_exp", gene_annotation_filename)
-    DF = pd.read_csv(path, sep='\t', header=None, names=narrow_peak_col)
-    #return DF.loc[DF[]
+    DF = pd.read_csv(path, sep='\t', header=None, names=gene_annotation_col)
+    DF = DF.loc[DF['type'] == seq_type]
+    pos_strand = DF.loc[DF['strand'] == 1, ('ENSG_ID', 'chrom', 'chromStart')]
+    pos_strand.rename(columns={'chromStart': 'TSS'}, inplace=True)
+    neg_strand = DF.loc[DF['strand'] == -1, ('ENSG_ID', 'chrom', 'chromEnd')]
+    neg_strand.rename(columns={'chromEnd': 'TSS'}, inplace=True)
+    return pd.concat([pos_strand, neg_strand], ignore_index=True)
 
 
 def com_exp_mk(mark, chrom):
@@ -74,7 +78,9 @@ def com_exp_mk(mark, chrom):
     @param:
     @return:
     '''
+    pass
 
 
 if __name__ == '__main__':
-    reg_by_chrom('H3K4me3','chr1')
+    #reg_by_chrom('H3K4me3','chr1')
+    print get_TSS()
