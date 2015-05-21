@@ -17,7 +17,7 @@ def get_len_num(mark):
     return len_dict, num_dict
 
 
-def ran_simu(len_dict, num_dict, quantile=0.9):
+def ran_simu(len_dict, num_dict):
     al = None
     for key in len_dict:
         if al == None:
@@ -25,12 +25,16 @@ def ran_simu(len_dict, num_dict, quantile=0.9):
         else:
             al = np.hstack((al, len_dict[key]))
     np.random.shuffle(al)
-    res = []
+    res = None
     tmp = 0
     for key in num_dict:
         tmp_arr = al[tmp:tmp+num_dict[key]]
         tmp_arr = np.sort(tmp_arr)
-        res.append(tmp_arr[int(quantile*len(tmp_arr))])
+        quantile = [int(i*len(tmp_arr)) for i in [0.01,0.05,0.25,0.50,0.75,0.95,0.99]]
+        if res == None:
+            res = np.array([tmp_arr[it] for it in quantile])
+        else:
+            res = np.vstack((res, np.array([tmp_arr[it] for it in quantile])))
         tmp = tmp+num_dict[key]
     return res
 
@@ -38,14 +42,15 @@ def ran_simu(len_dict, num_dict, quantile=0.9):
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     len_dict, num_dict = get_len_num("H3K4me3")
-    result = []
-    for i in range(10):
-        result.extend(ran_simu(len_dict, num_dict))
-    print result[:10]
-    result = np.array(result)
-    sns.kdeplot(result, shade=True)
-    print np.sort(len_dict['E002'])[int(0.9*len(len_dict['E002']))]
-    plt.show()
+    result = None
+    for i in range(100):
+        if result == None:
+            result = ran_simu(len_dict, num_dict)
+        else:
+            result = np.vstack((result, ran_simu(len_dict, num_dict)))
+    result = pd.DataFrame(result,
+        columns=['0.01', '0.05', '0.25', '0.50', '0.75', '0.95', '0.99'])
+    result.to_csv(os.path.join(get_data_dir(), "tmp", "simulation_result.csv"),index=False)
     '''
     data = [len_dict[it] for it in get_full_EID_list()[:4]]
     with sns.color_palette("Set2"):
