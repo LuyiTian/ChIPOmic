@@ -58,6 +58,27 @@ def paixu2(DF):
     DF = pd.DataFrame(data,columns=['chrom','chromStart','chromEnd','length','signalValue','EID'])
     return DF
 
+def paixu3(DF):
+    a = ['chr'+str(n) for n in range(1,23)]
+    a.append('chrX')
+    a.append('chrY')
+    chrom = [];
+    TSS = [];
+    gene_name = [];
+    strand = [];
+    for i in a:
+        DF_tmp = DF.loc[DF["chrom"] == i].sort('TSS')
+        print 'begin',i
+        for j in range(0,len(list(DF_tmp.chrom)),1):
+            chrom.append(list(DF_tmp.chrom)[j])
+            TSS.append(list(DF_tmp.TSS)[j])
+            gene_name.append(list(DF_tmp.gene_name)[j])
+            strand.append(list(DF_tmp.strand)[j])
+        print 'finish',i
+    data = {'chrom':chrom,'TSS':TSS,'gene_name':gene_name,'strand':strand,}
+    DF = pd.DataFrame(data,columns=['chrom','TSS','gene_name','strand'])
+    return DF
+
 def get_enhancer():
     path = os.path.join(get_data_dir(), "tmp", "enhancer.txt");
     handle = SeqIO.parse(path,'fasta')
@@ -81,7 +102,7 @@ def get_TSS():
     '''
     path = os.path.join(get_data_dir(), "tmp", "TSS_human.bed");
     TSS = pd.read_csv(path, sep='\t',header=None)
-    # TSS.convert_objects(convert_numeric=True)
+    TSS.convert_objects(convert_numeric=True)
     # print type(TSS[1])
     data = {'chrom':list(TSS[0]),'chromStart':list(TSS[1]),'chromEnd':list(TSS[2])}
     TSS = pd.DataFrame(data,columns=['chrom','chromStart','chromEnd'])
@@ -113,7 +134,7 @@ def get_TSS2():
               sep='\t', index=False)
 
 
-def map_mark_state(mark,state,cut_off=40):
+def map_mark_state(mark,state,cut_off):
     a = ['chr'+str(n) for n in range(1,23)]
     a.append('chrX')
     a.append('chrY')
@@ -160,6 +181,41 @@ def map_mark_state(mark,state,cut_off=40):
     DF.to_csv(os.path.join(get_data_dir(), "tmp", "{0} in {1}-{2}.csv".format(mark,state,cut_off)),
                sep='\t', index=False)
            
+def he_bing_feng(mark,state,cut_off):
+    path1 = os.path.join(get_data_dir(), "tmp", "{0} in {1}-{2}.csv".format(mark,state,cut_off))
+    DF1 = pd.read_csv(path1, sep='\t')
+    path2 = os.path.join(get_data_dir(), "tmp", 'TSS.csv')
+    DF2 = pd.read_csv(path2,sep='\t')
+    DF2 = paixu3(DF2)
+    Full_EID_list = get_full_EID_list()
+    signalValue = [];
+    chrom = [];
+    TSS = []
+    EID = []
+    gene_name = []
+    n = 0
+    
+    for i,j,k in zip(list(DF2['chrom']),list(DF2['TSS']),list(DF2['gene_name'])):
+        print n 
+        n += 1
+        tmp = DF1.loc[(DF1['chrom'] == i) & (DF1['TSS'] == j)]
+        for id in Full_EID_list:
+            tmp2 = tmp.loc[ tmp['EID'] == id] 
+            if len(tmp2.index) >= 2:
+                signalValue.append(sum(tmp2['signalValue'].values)/len(tmp2.index))
+            elif len(tmp2.index) == 1:
+                signalValue.append(list(tmp2['signalValue'])[0])
+            else:
+                continue
+            chrom.append(i)
+            TSS.append(j)
+            EID.append(id)
+            gene_name.append(k)
+            
+    data = {'chrom':chrom,'TSS':TSS,'EID':EID,'signalValue':signalValue,'gene_name':gene_name}
+    DF = pd.DataFrame(data,columns=['chrom','TSS','EID','signalValue','gene_name'])
+    DF.to_csv(os.path.join(get_data_dir(), "tmp", "{0} in {1}-{2}organized.csv".format(mark,state,cut_off)),
+               sep='\t', index=False)
     
 def res_matrix(mark,state,cut_off=40):
     path = os.path.join(get_data_dir(), "tmp", "{0} in {1}-{2}.csv".format(mark, state,cut_off))
@@ -244,7 +300,9 @@ if __name__ == "__main__":
     # get_TSS2()
     mark = 'H3K4me3'
     state = 'TSS'
-    map_mark_state(mark,state);
+    cut_off = 40 
+    # map_mark_state(mark,state,cut_off);
     # res_matrix(mark,state)
     # organized();
     # tmp_justhaveatry()
+    he_bing_feng(mark,state,cut_off)
