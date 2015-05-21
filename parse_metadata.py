@@ -10,8 +10,7 @@ import urllib
 ##########  hard coded parameters
 LOCATION = {
     "luyi": os.path.normpath("/Users/luyi/data/epi_data"),
-    "HZL-PC": os.path.normpath("E:/Programming/BINFproj/data/epi_data"),
-    "i7": os.path.normpath("/home/i7/workspace/PyTest/epi_data")
+    "HZL-PC": os.path.normpath("E:/EDUCATION/BINF90002/assign2/epi_data")
 }
 
 MARK = ['H3K4me1', 'H3K4me3', 'H3K27me3', 'H3K36me3', 'H3K9me3']
@@ -54,11 +53,14 @@ def get_data_dir():
     except KeyError:
         pc_name = os.environ['USER']
     root_dir = LOCATION[pc_name]
+    print root_dir
     sub_dir_list = ["hm_data", "tmp", "eQTL_data", "gene_exp"]
+
     for sub_dir in sub_dir_list:
         if not os.path.isdir(os.path.join(root_dir, sub_dir)):
             # if sub-dictionary not exist, create it.
             os.mkdir(os.path.join(root_dir, sub_dir))
+
     return root_dir
 
 
