@@ -188,6 +188,7 @@ def he_bing_feng(mark,state,cut_off):
     DF2 = pd.read_csv(path2,sep='\t')
     DF2 = paixu3(DF2)
     Full_EID_list = get_full_EID_list()
+    width = [];
     signalValue = [];
     chrom = [];
     TSS = []
@@ -203,8 +204,10 @@ def he_bing_feng(mark,state,cut_off):
             tmp2 = tmp.loc[ tmp['EID'] == id] 
             if len(tmp2.index) >= 2:
                 signalValue.append(sum(tmp2['signalValue'].values)/len(tmp2.index))
+                width.append((sum(tmp2['chromEnd'].values)-sum(tmp2['chromStart'].values))/len(tmp2.index))
             elif len(tmp2.index) == 1:
                 signalValue.append(list(tmp2['signalValue'])[0])
+                width.append(list(tmp2['chromEnd'])[0]-list(tmp2['chromStart'])[0])
             else:
                 continue
             chrom.append(i)
@@ -212,8 +215,8 @@ def he_bing_feng(mark,state,cut_off):
             EID.append(id)
             gene_name.append(k)
             
-    data = {'chrom':chrom,'TSS':TSS,'EID':EID,'signalValue':signalValue,'gene_name':gene_name}
-    DF = pd.DataFrame(data,columns=['chrom','TSS','EID','signalValue','gene_name'])
+    data = {'chrom':chrom,'TSS':TSS,'width':width,'EID':EID,'signalValue':signalValue,'gene_name':gene_name}
+    DF = pd.DataFrame(data,columns=['chrom','TSS','width','EID','signalValue','gene_name'])
     DF.to_csv(os.path.join(get_data_dir(), "tmp", "{0} in {1}-{2}organized.csv".format(mark,state,cut_off)),
                sep='\t', index=False)
     
