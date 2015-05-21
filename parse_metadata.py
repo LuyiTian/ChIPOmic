@@ -53,9 +53,7 @@ def get_data_dir():
     except KeyError:
         pc_name = os.environ['USER']
     root_dir = LOCATION[pc_name]
-    print root_dir
     sub_dir_list = ["hm_data", "tmp", "eQTL_data", "gene_exp"]
-
     for sub_dir in sub_dir_list:
         if not os.path.isdir(os.path.join(root_dir, sub_dir)):
             # if sub-dictionary not exist, create it.
