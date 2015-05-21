@@ -10,6 +10,7 @@ import numpy as np
 # import sklearn for mean shift clustering
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
+
 def com_mark(EID_list, mark):
     '''
     @param:
@@ -94,7 +95,7 @@ def Bland_Altman_plot(mark, chrom, EID=None):
         path = os.path.join(get_data_dir(), "hm_data", "{0}-{1}.gz".format(EID, mark))
         DF = pd.read_csv(path, sep='\t', compression='gzip', header=None, names=narrow_peak_col)
         DF = DF.loc[DF["chrom"] == chrom].sort('chromStart')
-        DF = DF.loc[(DF["chromStart"] > 1080000) & (DF["chromStart"] < 1260000)]
+        DF = DF.loc[(DF["chromStart"] > 180000) & (DF["chromStart"] < 1500000)]
     else:
         path = os.path.join(get_data_dir(), "tmp", "{0}-{1}.csv".format(chrom, mark))
         DF = pd.read_csv(path, sep='\t')
@@ -116,9 +117,9 @@ def BA_meanshift_cluster(mark, chrom):
     DF = pd.read_csv(path, sep='\t')
     S_x = 0.5*(DF.loc[:, 'chromEnd'].values+DF.loc[:, 'chromStart'].values)
     S_y = DF.loc[:, 'chromEnd'].values-DF.loc[:, 'chromStart'].values
-    X = np.hstack((np.atleast_2d(S_x[9000:11000]).T, np.atleast_2d(S_y[9000:11000]).T))
+    X = np.hstack((np.atleast_2d(S_x[5000:6000]).T, np.atleast_2d(S_y[5000:6000]).T))
     print X
-    bandwidth = estimate_bandwidth(X, quantile=0.05, n_samples=1000)
+    bandwidth = estimate_bandwidth(X, quantile=0.1, n_samples=1000)
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=True)
     ms.fit(X)
     labels = ms.labels_
@@ -149,8 +150,8 @@ if __name__ == '__main__':
     pl.hist([i for i in DF.loc[:, 'Cluster'].value_counts() if i > 30], bins=50)
     pl.show()
     '''
-    #Bland_Altman_plot('H3K4me3', 'chr1', 'E002')
-    BA_meanshift_cluster('H3K4me3', 'chr1')
+    Bland_Altman_plot('H3K4me3', 'chr1', 'E002')
+    #BA_meanshift_cluster('H3K4me3', 'chr1')
     #find_cluster(mark, 'chr1')
     #organize_by_chrom(Full_EID_list, mark, 'chr1')
     #com_mark(EID_list, mark)
