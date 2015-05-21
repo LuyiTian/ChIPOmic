@@ -17,11 +17,20 @@ def get_len_num(mark):
     return len_dict, num_dict
 
 
+def ran_simu(len_dict,num_dict):
+    
+
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     len_dict, num_dict = get_len_num("H3K4me3")
-    data = [len_dict[it] for it in get_full_EID_list()[:10]]
+    al = None
+    for key in len_dict:
+        if al == None:
+            al = len_dict[key]
+        else:
+            al = np.hstack((al,len_dict[key]))
+    data = [len_dict[it] for it in get_full_EID_list()[:4]]+[al]
     with sns.color_palette("Set2"):
-        for d, label in zip(data, get_full_EID_list()[:10]):
+        for d, label in zip(data, get_full_EID_list()[:4]+['ALL']):
             sns.kdeplot(d, shade=False, label=label)
     plt.show()

@@ -150,8 +150,8 @@ if __name__ == '__main__':
     pl.hist([i for i in DF.loc[:, 'Cluster'].value_counts() if i > 30], bins=50)
     pl.show()
     '''
-    Bland_Altman_plot('H3K4me3', 'chr1', 'E002')
-    #BA_meanshift_cluster('H3K4me3', 'chr1')
+    #Bland_Altman_plot('H3K4me3', 'chr1', 'E002')
+    BA_meanshift_cluster('H3K4me3', 'chr1')
     #find_cluster(mark, 'chr1')
     #organize_by_chrom(Full_EID_list, mark, 'chr1')
     #com_mark(EID_list, mark)
