@@ -12,6 +12,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.pyplot import plot
+import math
 
 def paixu(DF):
     a = ['chr'+str(n) for n in range(1,23)]
@@ -260,39 +261,24 @@ def organized():
     
     
 def tmp_justhaveatry():  
-    path = os.path.join(get_data_dir(), "tmp", "top width -1.csv");
-    '''
-    EID = ['E001','E002','E003','E008','E014','E015','E016','E024']
-    m = [(i+1.0)/10 for i in range(0,10,1)]
-    data = {}
-    for id in EID:
-        DF = pd.read_csv(path, sep='\t')
-        DF = DF.loc[DF['EID'] == id]
-        x = DF['length'].values
-        y = DF['signalValue'].values 
-        n = [];
-        for i in m:
-            n.append(sum(y[len(y)*(i-0.1)/100:len(y)*(i)/100])/(len(y)/1000))
-        data[id] = n
-    data['x'] = m
-    
-    DF = pd.DataFrame(data,columns=EID.append('x'))
-    DF.to_csv(os.path.join(get_data_dir(), "tmp", "length vs signal(ES Cell).csv"),
-               sep='\t', index=False)
-    '''
-    EID = 'E003'
+    path = os.path.join(get_data_dir(), "tmp", "H3K4me3 in TSS-40organized.csv");
     DF = pd.read_csv(path, sep='\t')
+    DF = DF.sort('width',ascending=False)
     # DF = DF.loc[DF['EID'] == EID]
-    x = DF['length'].values
+    x = DF['width'].values
     y = DF['signalValue'].values 
-    print len(y)
-    DF = DF.loc[DF["EID"] == EID].sort('signalValue')
+    print DF
     m = [(i+1.0)/1 for i in range(0,100,1)]
     n = [];
     chang = [];
     for i in m:
         n.append(sum(y[len(y)*(i-1)/100:len(y)*(i)/100])/(len(y)/100))
-        chang.append(sum(x[len(x)*(i-1)/100:len(x)*(i)/100])/(len(x)/100))
+        chang.append((sum(x[len(x)*(i-1)/100:len(x)*(i)/100])/(len(x)/100)))
+    data = {'width':chang,'signalValue':n}
+    print chang
+    DF = pd.DataFrame(data,columns=['width','signalValue'])
+    DF.to_csv(os.path.join(get_data_dir(), "tmp", "width vs signal.csv"),
+               sep='\t', index=False)
     plot(chang,n,'.')
     plt.show()
         
@@ -307,5 +293,5 @@ if __name__ == "__main__":
     # map_mark_state(mark,state,cut_off);
     # res_matrix(mark,state)
     # organized();
-    # tmp_justhaveatry()
-    he_bing_feng(mark,state,cut_off)
+    tmp_justhaveatry()
+    # he_bing_feng(mark,state,cut_off)
