@@ -27,6 +27,9 @@ gene_annotation_col = ["ENSG_ID", "chrom", "chromStart", "chromEnd", "strand", "
 
 #sample group file
 sample_group_filename = "jul2013.roadmapData.qc - Consolidated_EpigenomeIDs_summary_Table.csv"
+
+#gene expression file
+gene_exp_file = "57epigenomes.RPKM.csv"
 ##########
 
 

@@ -135,11 +135,11 @@ def get_TSS2():
               sep='\t', index=False)
 
 
-def map_mark_state(mark,state,cut_off):
+def map_mark_state(mark,state,cut_off,TSS_file='TSS.csv',gene_id="gene_name"):
     a = ['chr'+str(n) for n in range(1,23)]
     a.append('chrX')
     a.append('chrY')
-    TSS = os.path.join(get_data_dir(), "tmp", 'TSS.csv')
+    TSS = os.path.join(get_data_dir(), "tmp", TSS_file)
     TSS_DF = pd.read_csv(TSS, sep='\t')
     
     EID = []
@@ -162,7 +162,7 @@ def map_mark_state(mark,state,cut_off):
         TSS_DF_tmp = TSS_DF.loc[TSS_DF['chrom'] == c]
         middle = list((DF['chromStart'].values+DF['chromEnd'].values)/2)
         DF['middle'] = middle
-        for i,k in zip(list(TSS_DF_tmp['TSS'].values),list(TSS_DF_tmp['gene_name'])):
+        for i,k in zip(list(TSS_DF_tmp['TSS'].values),list(TSS_DF_tmp[gene_id])):
             tmp = DF.loc[i-1000<DF['middle']]
             tmp = tmp.loc[DF['middle']<i+1000] 
             if len(tmp.index) >= cut_off :
@@ -290,8 +290,8 @@ if __name__ == "__main__":
     mark = 'H3K4me3'
     state = 'TSS'
     cut_off = 40 
-    # map_mark_state(mark,state,cut_off);
+    map_mark_state(mark,state,cut_off,TSS_file='ENSG_TSS.csv',gene_id="ENSG_ID");
     # res_matrix(mark,state)
     # organized();
-    tmp_justhaveatry()
+    # tmp_justhaveatry()
     # he_bing_feng(mark,state,cut_off)

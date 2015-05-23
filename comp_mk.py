@@ -58,7 +58,7 @@ def reg_by_chrom(mark, chrom, cut_off=40):
     plt.show()
 
 
-def get_TSS(seq_type="protein_coding"):
+def get_TSS(seq_type="protein_coding", to_csv = True):
     '''
     @param:
     @return:
@@ -70,7 +70,11 @@ def get_TSS(seq_type="protein_coding"):
     pos_strand.rename(columns={'chromStart': 'TSS'}, inplace=True)
     neg_strand = DF.loc[DF['strand'] == -1, ('ENSG_ID', 'chrom', 'chromEnd')]
     neg_strand.rename(columns={'chromEnd': 'TSS'}, inplace=True)
-    return pd.concat([pos_strand, neg_strand], ignore_index=True)
+    result = pd.concat([pos_strand, neg_strand], ignore_index=True)
+    result['chrom'] = result['chrom'].apply(func=lambda x: 'chr'+str(x))
+    if to_csv:
+        result.to_csv(os.path.join(get_data_dir(), "tmp", "ENSG_TSS.csv"),index=False,sep='\t')
+    return result 
 
 
 def com_exp_mk(mark, chrom):
