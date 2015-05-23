@@ -24,6 +24,9 @@ narrow_peak_col = ["chrom", "chromStart", "chromEnd", "name", "score", "strand",
 
 gene_annotation_filename = "Ensembl_v65.Gencode_v10.ENSG.gene_info"
 gene_annotation_col = ["ENSG_ID", "chrom", "chromStart", "chromEnd", "strand", "type", "gene symbol", "full name"]
+
+#sample group file
+sample_group_filename = "jul2013.roadmapData.qc - Consolidated_EpigenomeIDs_summary_Table.csv"
 ##########
 
 

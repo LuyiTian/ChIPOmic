@@ -3,7 +3,7 @@
 #contributor: Luyi Tian
 
 import os
-from parse_metadata import get_data_dir, narrow_peak_col
+from parse_metadata import get_data_dir, narrow_peak_col, get_full_EID_list
 import pandas as pd
 from itertools import izip
 import numpy as np
@@ -151,7 +151,9 @@ if __name__ == '__main__':
     pl.show()
     '''
     #Bland_Altman_plot('H3K4me3', 'chr1', 'E002')
-    BA_meanshift_cluster('H3K4me3', 'chr1')
+    #BA_meanshift_cluster('H3K4me3', 'chr1')
     #find_cluster(mark, 'chr1')
     #organize_by_chrom(Full_EID_list, mark, 'chr1')
     #com_mark(EID_list, mark)
+    for chrom in ['chr'+str(i) for i in range(1,23)]+['chrX', 'chrY']:
+        organize_by_chrom(get_full_EID_list(), "H3K4me3", chrom)
