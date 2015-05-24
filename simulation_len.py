@@ -41,7 +41,8 @@ def ran_simu(len_dict, num_dict):
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
-    len_dict, num_dict = get_len_num("H3K4me3")
+    mark = "H3K27me3"
+    len_dict, num_dict = get_len_num(mark)
     result = None
     for i in range(100):
         if result == None:
@@ -50,7 +51,7 @@ if __name__ == '__main__':
             result = np.vstack((result, ran_simu(len_dict, num_dict)))
     result = pd.DataFrame(result,
         columns=['0.01', '0.05', '0.25', '0.50', '0.75', '0.95', '0.99'])
-    result.to_csv(os.path.join(get_data_dir(), "tmp", "simulation_result.csv"),index=False)
+    result.to_csv(os.path.join(get_data_dir(), "tmp", "{0}_simulation_result.csv".format(mark)),index=False)
     '''
     data = [len_dict[it] for it in get_full_EID_list()[:4]]
     with sns.color_palette("Set2"):

@@ -64,13 +64,14 @@ def peak_pca(input_path, eid_dic, c_dic):
     EID_list = get_full_EID_list()
     EID = dict([(eid, i) for i,eid in enumerate(EID_list)])
     DF = pd.read_csv(input_path)
+    DF.drop('gene_id', axis=1, inplace=True)
     X = DF.as_matrix().T
-    pca = PCA(n_components=2)
-    X_r = pca.fit(X).transform(X)
-    #ica = FastICA(n_components=2)
-    #X_r = ica.fit_transform(X)
-    print('explained variance ratio (first two components): %s'
-      % str(pca.explained_variance_ratio_))
+    #pca = PCA(n_components=2)
+    #X_r = pca.fit(X).transform(X)
+    ica = FastICA(n_components=2)
+    X_r = ica.fit_transform(X)
+    #print('explained variance ratio (first two components): %s'
+    #  % str(pca.explained_variance_ratio_))
     plt.figure()
     for gp_name in eid_dic:
         ind = [EID[it] for it in eid_dic[gp_name]]
@@ -82,6 +83,6 @@ def peak_pca(input_path, eid_dic, c_dic):
 if __name__ == '__main__':
     path = os.path.join(get_data_dir(), "tmp", "H3K4me3 in TSS-40.csv")
     get_reg_matrix(path)
-    #path = os.path.join(get_data_dir(), "tmp", "signalValue_matrix.csv")
+    #path = os.path.join(get_data_dir(), "tmp", "signalValue_matrix_reduced.csv")
     #eid_dic, c_dic = get_group()
     #peak_pca(path, eid_dic, c_dic)

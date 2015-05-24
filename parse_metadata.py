@@ -82,8 +82,18 @@ def dl_narrow_peak(mark=MARK):
                 narrow_peak_url+"{0}-{1}.narrowPeak.gz".format(EID, m),
                 os.path.join(get_data_dir(), "hm_data", "{0}-{1}.gz".format(EID, m)))
     print ('download finished~~~~~~~~~~~~~~~')
+def dl_DNase_peak():
+    DF = pd.read_csv(os.path.join(get_data_dir(), metadata_filename))
+    EID_list = DF.loc[DF["MARK"] == 'DNase','EID'].tolist()
+    for EID in EID_list:
+        print ('downloading...    ', EID, 'DNase')
+        urllib.urlretrieve(
+            narrow_peak_url+"{}-{}.hotspot.fdr0.01.peaks.bed.gz".format(EID, 'DNase'),
+            os.path.join(get_data_dir(), "hm_data", "{0}-{1}.gz".format(EID, 'DNase')))
+    print ('download finished~~~~~~~~~~~~~~~')
 
 if __name__ == '__main__':
+    '''
     print (get_data_dir())
     print (os.path.join(get_data_dir(), metadata_filename))
     EID, m = 'E002', 'H3K4me1'
@@ -96,3 +106,5 @@ if __name__ == '__main__':
     pl.hist(b, bins=100)
     pl.show()
     #dl_narrow_peak()
+    '''
+    dl_DNase_peak()

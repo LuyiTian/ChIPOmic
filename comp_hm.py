@@ -55,7 +55,7 @@ def organize_by_chrom(EID_list, mark, chrom):
         DF['EID'] = EID
         res_df = res_df.append(DF, ignore_index=True)
     res_df = res_df.sort('chromStart')
-    res_df.to_csv(os.path.join(get_data_dir(), "tmp", "{0}-{1}.csv".format(chrom, mark)), sep='\t', index=False)
+    res_df.to_csv(os.path.join(get_data_dir(), "tmp", mark,"{0}-{1}.csv".format(chrom, mark)), sep='\t', index=False)
 
 
 def find_cluster(mark, chrom, max_diff=150):
@@ -156,4 +156,4 @@ if __name__ == '__main__':
     #organize_by_chrom(Full_EID_list, mark, 'chr1')
     #com_mark(EID_list, mark)
     for chrom in ['chr'+str(i) for i in range(1,23)]+['chrX', 'chrY']:
-        organize_by_chrom(get_full_EID_list(), "H3K4me3", chrom)
+        organize_by_chrom(get_full_EID_list(), "H3K27me3", chrom)

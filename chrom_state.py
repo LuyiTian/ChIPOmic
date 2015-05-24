@@ -157,7 +157,7 @@ def map_mark_state(mark,state,cut_off,TSS_file='TSS.csv',gene_id="gene_name"):
     print middle
     '''
     for c in a:
-        path = os.path.join(get_data_dir(), "tmp", "{0}-{1}.csv".format(c, mark))
+        path = os.path.join(get_data_dir(), "tmp", mark, "{0}-{1}.csv".format(c, mark))
         DF = pd.read_csv(path, sep='\t')
         TSS_DF_tmp = TSS_DF.loc[TSS_DF['chrom'] == c]
         middle = list((DF['chromStart'].values+DF['chromEnd'].values)/2)
@@ -287,7 +287,7 @@ def tmp_justhaveatry():
 if __name__ == "__main__":
     # get_enhancer()
     # get_TSS2()
-    mark = 'H3K4me3'
+    mark = 'H3K27me3'
     state = 'TSS'
     cut_off = 40 
     map_mark_state(mark,state,cut_off,TSS_file='ENSG_TSS.csv',gene_id="ENSG_ID");
