@@ -88,7 +88,7 @@ def dl_DNase_peak():
     for EID in EID_list:
         print ('downloading...    ', EID, 'DNase')
         urllib.urlretrieve(
-            narrow_peak_url+"{}-{}.hotspot.fdr0.01.peaks.bed.gz".format(EID, 'DNase'),
+            narrow_peak_url+"{}-{}.macs2.narrowPeak.gz".format(EID, 'DNase'),
             os.path.join(get_data_dir(), "hm_data", "{0}-{1}.gz".format(EID, 'DNase')))
     print ('download finished~~~~~~~~~~~~~~~')
 

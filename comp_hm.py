@@ -113,11 +113,11 @@ def BA_meanshift_cluster(mark, chrom):
     perform mean shift cluster on 2D data:
         ((chromStart+chromEnd)*0.5, chromEnd-chromStart)
     '''
-    path = os.path.join(get_data_dir(), "tmp", "{0}-{1}.csv".format(chrom, mark))
+    path = os.path.join(get_data_dir(), "tmp", mark,"{0}-{1}.csv".format(chrom, mark))
     DF = pd.read_csv(path, sep='\t')
     S_x = 0.5*(DF.loc[:, 'chromEnd'].values+DF.loc[:, 'chromStart'].values)
     S_y = DF.loc[:, 'chromEnd'].values-DF.loc[:, 'chromStart'].values
-    X = np.hstack((np.atleast_2d(S_x[5000:6000]).T, np.atleast_2d(S_y[5000:6000]).T))
+    X = np.hstack((np.atleast_2d(S_x[7000:8000]).T, np.atleast_2d(S_y[7000:8000]).T))
     print X
     bandwidth = estimate_bandwidth(X, quantile=0.1, n_samples=1000)
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=True)
@@ -151,9 +151,9 @@ if __name__ == '__main__':
     pl.show()
     '''
     #Bland_Altman_plot('H3K4me3', 'chr1', 'E002')
-    #BA_meanshift_cluster('H3K4me3', 'chr1')
+    BA_meanshift_cluster('H3K4me3', 'chr1')
     #find_cluster(mark, 'chr1')
     #organize_by_chrom(Full_EID_list, mark, 'chr1')
     #com_mark(EID_list, mark)
-    for chrom in ['chr'+str(i) for i in range(1,23)]+['chrX', 'chrY']:
-        organize_by_chrom(get_full_EID_list(), "H3K27me3", chrom)
+    #for chrom in ['chr'+str(i) for i in range(1,23)]+['chrX', 'chrY']:
+    #    organize_by_chrom(get_full_EID_list(), "H3K27me3", chrom)

@@ -1,10 +1,33 @@
 #simulation
 
 import pandas as pd
-from parse_metadata import get_full_EID_list, get_data_dir, narrow_peak_col
+from parse_metadata import get_full_EID_list, get_data_dir, narrow_peak_col, metadata_filename
 import numpy as np
 import os
 import seaborn as sns
+
+
+def TSS_len_num(path, mark):
+    len_dict = {}
+    num_dict = {}
+    DF = pd.read_csv(path)
+    for EID in get_full_EID_list():
+        tmp_DF = DF.loc[DF["EID"]==EID]
+        len_dict[EID] = np.log(tmp_DF.loc[:, 'chromEnd'].values-tmp_DF.loc[:, 'chromStart'].values)
+        num_dict[EID] = len(tmp_DF)
+    return len_dict, num_dict
+
+def DNase_len_num():
+    DF = pd.read_csv(os.path.join(get_data_dir(), metadata_filename))
+    EID_list = DF.loc[DF["MARK"] == 'DNase','EID'].tolist()
+    len_dict = {}
+    num_dict = {}
+    for EID in EID_list:
+        path = os.path.join(get_data_dir(), "hm_data", "{0}-{1}.gz".format(EID, 'DNase'))
+        DF = pd.read_csv(path, sep='\t', compression='gzip', header=None, names=narrow_peak_col)
+        len_dict[EID] = np.log(DF.loc[:, 'chromEnd'].values-DF.loc[:, 'chromStart'].values)
+        num_dict[EID] = len(DF)
+    return len_dict, num_dict
 
 def get_len_num(mark):
     len_dict = {}
@@ -13,7 +36,7 @@ def get_len_num(mark):
         path = os.path.join(get_data_dir(), "hm_data", "{0}-{1}.gz".format(EID, mark))
         DF = pd.read_csv(path, sep='\t', compression='gzip', header=None, names=narrow_peak_col)
         len_dict[EID] = np.log(DF.loc[:, 'chromEnd'].values-DF.loc[:, 'chromStart'].values)
-        num_dict[EID] = len(DF)
+        num_dict[EID] = DF.loc[:, 'signalValue'].values
     return len_dict, num_dict
 
 

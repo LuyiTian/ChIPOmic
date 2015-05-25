@@ -28,6 +28,7 @@ def get_group():
 
 def get_reg_matrix(input_path, to_csv=True, with_gene_id=True, val="signalValue"):
     DF = pd.read_csv(input_path, sep='\t')
+    DF["width"] = DF.loc[:, 'chromEnd']-DF.loc[:, 'chromStart']
     EID_list = get_full_EID_list()
     EID = dict([(eid, i) for i,eid in enumerate(EID_list)])
     gene_list = reduce(lambda r, v: v in r and r or r + [v], list(DF["gene_name"]), [])
@@ -44,12 +45,13 @@ def get_reg_matrix(input_path, to_csv=True, with_gene_id=True, val="signalValue"
         result = pd.DataFrame(res_matrix, columns=EID_list)
         if with_gene_id:
             result['gene_id'] = gene_list
-        result.to_csv(os.path.join(get_data_dir(), "tmp", "{0}_matrix.csv".format(val)), index=False)
+        result.to_csv(os.path.join(get_data_dir(), "tmp", "H3K3me3_{0}_matrix.csv".format(val)), index=False)
     return res_matrix
 
 
 def l_reg(input_path):
     DF = pd.read_csv(input_path)
+    DF.drop('gene_id', axis=1, inplace=True)
     #corr_mat = np.corrcoef(DF.as_matrix())
     f, ax = plt.subplots(figsize=(20, 20))
     cmap = sns.diverging_palette(220, 10, as_cmap=True)
@@ -57,7 +59,7 @@ def l_reg(input_path):
              diag_names=False, cmap=cmap, ax=ax)
     ax.xaxis.set_visible(False)
     ax.yaxis.set_visible(False)
-    plt.savefig(os.path.join(get_data_dir(), "tmp", "corrplot.png"))
+    plt.savefig(os.path.join(get_data_dir(), "tmp", "H3K27me3_corrplot.png"))
 
 
 def peak_pca(input_path, eid_dic, c_dic):
@@ -66,12 +68,12 @@ def peak_pca(input_path, eid_dic, c_dic):
     DF = pd.read_csv(input_path)
     DF.drop('gene_id', axis=1, inplace=True)
     X = DF.as_matrix().T
-    #pca = PCA(n_components=2)
-    #X_r = pca.fit(X).transform(X)
-    ica = FastICA(n_components=2)
-    X_r = ica.fit_transform(X)
-    #print('explained variance ratio (first two components): %s'
-    #  % str(pca.explained_variance_ratio_))
+    pca = PCA(n_components=2)
+    X_r = pca.fit(X).transform(X)
+    #ica = FastICA(n_components=2)
+    #X_r = ica.fit_transform(X)
+    print('explained variance ratio (first two components): %s'
+      % str(pca.explained_variance_ratio_))
     plt.figure()
     for gp_name in eid_dic:
         ind = [EID[it] for it in eid_dic[gp_name]]
@@ -83,6 +85,8 @@ def peak_pca(input_path, eid_dic, c_dic):
 if __name__ == '__main__':
     path = os.path.join(get_data_dir(), "tmp", "H3K4me3 in TSS-40.csv")
     get_reg_matrix(path)
+    #path = os.path.join(get_data_dir(), "tmp", "less40_signalValue_matrix.csv")
+    #l_reg(path)
     #path = os.path.join(get_data_dir(), "tmp", "signalValue_matrix_reduced.csv")
     #eid_dic, c_dic = get_group()
     #peak_pca(path, eid_dic, c_dic)

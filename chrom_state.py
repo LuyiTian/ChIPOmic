@@ -165,7 +165,7 @@ def map_mark_state(mark,state,cut_off,TSS_file='TSS.csv',gene_id="gene_name"):
         for i,k in zip(list(TSS_DF_tmp['TSS'].values),list(TSS_DF_tmp[gene_id])):
             tmp = DF.loc[i-1000<DF['middle']]
             tmp = tmp.loc[DF['middle']<i+1000] 
-            if len(tmp.index) >= cut_off :
+            if len(tmp.index) <= cut_off :
                 for j in range(0,len(tmp.index),1):
                     chrom.append(c)
                     Tss.append(i)
@@ -179,7 +179,7 @@ def map_mark_state(mark,state,cut_off,TSS_file='TSS.csv',gene_id="gene_name"):
                
     data = {'chrom':chrom,'chromStart':chromStart,'chromEnd':chromEnd,'TSS':Tss,'EID':EID,'signalValue':signalValue,'gene_name':gene_name}
     DF = pd.DataFrame(data,columns=['chrom','chromStart','chromEnd','TSS','EID','signalValue','gene_name'])
-    DF.to_csv(os.path.join(get_data_dir(), "tmp", "{0} in {1}-{2}.csv".format(mark,state,cut_off)),
+    DF.to_csv(os.path.join(get_data_dir(), "tmp", "{0} less40 in {1}-{2}.csv".format(mark,state,cut_off)),
                sep='\t', index=False)
            
 def he_bing_feng(mark,state,cut_off):
@@ -287,7 +287,7 @@ def tmp_justhaveatry():
 if __name__ == "__main__":
     # get_enhancer()
     # get_TSS2()
-    mark = 'H3K27me3'
+    mark = 'H3K4me3'
     state = 'TSS'
     cut_off = 40 
     map_mark_state(mark,state,cut_off,TSS_file='ENSG_TSS.csv',gene_id="ENSG_ID");
